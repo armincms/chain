@@ -26,10 +26,10 @@ The ` trigger` Chain initializes via the `as` method. the `as` method accepts tw
             }), 
 
 
-# Make trigger field
+# Make listener field
 
-A `listener` accept array of events as first argument and a callback for resolve fields. for listen to the other Chain you chould pass the name of it Chain as the event name. for listen to the fields of the other chain you should pass the Chain prefixed name of the field. for example you can listen to `name` field of the Chain named `test` by the evnet `test.name`.  
-
+The `listener` Chain initializes via the `with` method. the `with` method accepts `an array of events` as the first argument and a callback for the fields as second arguemnt.
+for listening to a `trigger` Chain you should pass the `name` of the Chain as the `event` name. for listening to a field of a `trigger` Chain you can `prefix the field name by the Chain name` and listen to it. for example, you can listen to the `name` field of a Chain (Chain field named by the 'test'), with the `test.name` event.
 
             
             Chain::with('name', function($request) {
