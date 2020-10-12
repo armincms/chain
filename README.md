@@ -56,3 +56,6 @@ for listening to a `trigger` Chain you should pass the `name` of the Chain as th
                       ->withMeta(['value' => 1]), 
                 ]; 
             }),
+            
+<img src="/chain.gif" width="100%" />
+
