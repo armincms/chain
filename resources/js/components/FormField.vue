@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <loading-view :loading="loading">
     <component 
       v-for="(field, index) in fields"
       :key="index"
@@ -15,7 +15,7 @@
       @file-deleted="$emit('update-last-retrieved-at-timestamp')"  
       @hook:updated="updated(field)" 
     /> 
-  </div>
+  </loading-view>
 </template>
 
 <script>
@@ -32,6 +32,7 @@ export default {
 
   data: () => ({ 
     fields: [], 
+    loading: false,
     form: {
       type: Object,
       default: {}
@@ -98,7 +99,10 @@ export default {
      * Get the available fields for the resource.
      */
     async getFields(formData) { 
-      return await Nova.request()
+      this.fields = [];
+      this.loading= true;
+
+      await Nova.request()
         .post(
           `/nova-api/${this.resourceName}/chain-fields`,
           formData,
@@ -120,9 +124,10 @@ export default {
         })
         .then(({ data }) => { 
           this.fields = data
+          this.loading= false
           
           _.each(this.fields, field => {
-            field.fill = () => ''   
+            field.fill = () => '' 
           })
         })  
     },
