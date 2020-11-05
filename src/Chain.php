@@ -150,7 +150,44 @@ class Chain extends Field
     public function resolveFields(NovaRequest $request)
     {
         return new FieldCollection(call_user_func($this->fieldsCallback, $request)); 
+    } 
+
+    /**
+     * Get the validation rules for this field.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @return array
+     */
+    public function getRules(NovaRequest $request)
+    { 
+        return $this->resolveFields($request)->flatMap->getRules($request)->merge(parent::getRules($request))->all();
     }
+
+    /**
+     * Get the creation rules for this field.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @return array|string
+     */
+    public function getCreationRules(NovaRequest $request)
+    { 
+        $creationRules = parent::getCreationRules($request);
+
+        return $this->resolveFields($request)->flatMap->getCreationRules($request)->merge($creationRules)->all();
+    } 
+
+    /**
+     * Get the update rules for this field.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @return array
+     */
+    public function getUpdateRules(NovaRequest $request)
+    {
+        $updateRules = parent::getCreationRules($request);
+
+        return $this->resolveFields($request)->flatMap->getUpdateRules($request)->merge($updateRules)->all();
+    } 
 
     /**
      * Prepare the field for JSON serialization.
