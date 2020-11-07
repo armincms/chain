@@ -43,15 +43,23 @@ export default {
     this.setInitialValue();
 
     if(this.field.events.length > 0) {
-      Nova.$on('chain.updated', this.chainUpdated)  
+      Nova.$on(this.events, this.chainUpdated)   
     } else {
       this.getFields(this.form)
     }
   }, 
 
+  beforeDestroy() {
+    Nova.$off(this.events, this.chainUpdated)
+  },
+
   computed: {
     availableFields: function() { 
       return this.fields.length ? this.fields : []
+    },
+
+    events: function() { 
+      return this.field.events.map((event) => this.attributeEvent(event))
     }
   },
 
@@ -80,9 +88,20 @@ export default {
     },
 
     updated: function (field) {     
-      Nova.$emit('chain.updated', this.field, field) 
+      Nova.$emit(this.attributeEvent(field.attribute), this.field, field) 
+      Nova.$emit(this.attributeEvent(this.field.attribute), this.field, field)  
     },  
 
+    /**
+     * Make event ley for the given attribute 
+     */
+    attributeEvent(event) {
+      return 'chain.' + event;
+    },
+
+    /**
+     * Handles events.
+     */
     chainUpdated: function(chain, field) {
       var events = [chain.attribute, chain.attribute +'.'+ field.attribute];
 
@@ -119,6 +138,7 @@ export default {
         .catch(error => {
           if (error.response.status == 404) {
             // this.$router.push({ name: '404' })
+            this.loading= false
             return
           }
         })

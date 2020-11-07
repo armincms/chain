@@ -85,7 +85,7 @@ class Chain extends Field
      */
     public static function with($chain, callable $callback, string $name = null)
     {
-    	return tap(new static($name ?? static::prepareName($name), $callback), function($chainField) use ($chain) {
+    	return tap(new static($name ?? static::prepareName($chain), $callback), function($chainField) use ($chain) {
     		$chainField->listen($chain);
     	});
     }
@@ -93,12 +93,12 @@ class Chain extends Field
     /**
      * Preapare a safe name for unnamed fields.
      * 
-     * @param  string $name 
+     * @param  string $chain 
      * @return string       
      */
-    private static function prepareName($name)
+    private static function prepareName($chain)
     {
-        if(! isset(static::$chains[$name])) {
+        if(! isset(static::$chains[$name = implode('-', (array) $chain)])) {
             static::$chains[$name] = 0;
         } 
 
