@@ -89,7 +89,7 @@ export default {
 
     updated: function (field) {     
       Nova.$emit(this.attributeEvent(field.attribute), this.field, field) 
-      Nova.$emit(this.attributeEvent(this.field.attribute), this.field, field)  
+      Nova.$emit(this.attributeEvent(this.field.attribute+'.'+field.attribute), this.field, field)  
     },  
 
     /**
