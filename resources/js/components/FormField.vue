@@ -13,7 +13,8 @@
       :via-relationship="viaRelationship"
       :shown-via-new-relation-modal="shownViaNewRelationModal"
       @file-deleted="$emit('update-last-retrieved-at-timestamp')"  
-      @hook:updated="fieldUpdated(field)" 
+      @hook:updated="emitUpdated(field)" 
+      @hook:beforeDestroy="emitBeforeDestroy(field)" 
     /> 
   </loading-view>
 </template>
@@ -44,6 +45,7 @@ export default {
 
     if(this.field.events.length > 0) {
       Nova.$on(this.updateEvents, this.chainUpdated)   
+      Nova.$on(this.beforeDestroyEvents, this.chainBeforeDestroy)   
     } else {
       this.getFields(this.form)
     }
@@ -51,6 +53,7 @@ export default {
 
   beforeDestroy() {
     Nova.$off(this.updateEvents, this.chainUpdated)
+    Nova.$off(this.beforeDestroyEvents, this.chainBeforeDestroy) 
   },
 
   computed: {
@@ -60,6 +63,10 @@ export default {
 
     updateEvents: function() { 
       return this.field.events.map((event) => this.viaNamespace(event))
+    },
+
+    beforeDestroyEvents: function() { 
+      return this.field.events.map((event) => this.viaNamespace(event + '.beforeDestroy'))
     }
   },
 
@@ -87,7 +94,11 @@ export default {
       this.value = value
     },
 
-    fieldUpdated: function (field) {     
+    emitBeforeDestroy: function (field) {       
+      Nova.$emit(this.viaCurrentNamespace(field.attribute+'.beforeDestroy'), this.field, field)  
+    }, 
+
+    emitUpdated: function (field) {     
       Nova.$emit(this.viaCurrentNamespace(), this.field, field) 
       Nova.$emit(this.viaCurrentNamespace(field.attribute), this.field, field)  
     },  
@@ -102,6 +113,26 @@ export default {
     viaNamespace() {
       return ['chain', [...arguments].join('.')].join(':');
     },
+
+    /**
+     * Handles updateEvents.
+     */
+    chainBeforeDestroy: function(chain, field) {
+      var events = [chain.attribute, chain.attribute +'.'+ field.attribute]; 
+
+      if(_.intersection(this.field.events, events).length == 0) {
+        return;
+      } 
+
+      var formData = _.tap(new FormData, (formData) => {
+        field.fill(formData)
+
+        for (let [key, value] of formData.entries()) 
+          this.form.delete(key)  
+      }) 
+
+      this.getFields(this.form);
+    }, 
 
     /**
      * Handles updateEvents.
