@@ -13,7 +13,7 @@
       :via-relationship="viaRelationship"
       :shown-via-new-relation-modal="shownViaNewRelationModal"
       @file-deleted="$emit('update-last-retrieved-at-timestamp')"  
-      @hook:updated="updated(field)" 
+      @hook:updated="fieldUpdated(field)" 
     /> 
   </loading-view>
 </template>
@@ -87,7 +87,7 @@ export default {
       this.value = value
     },
 
-    updated: function (field) {     
+    fieldUpdated: function (field) {     
       Nova.$emit(this.viaCurrentNamespace(), this.field, field) 
       Nova.$emit(this.viaCurrentNamespace(field.attribute), this.field, field)  
     },  

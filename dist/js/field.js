@@ -514,7 +514,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     },
 
 
-    updated: function updated(field) {
+    fieldUpdated: function fieldUpdated(field) {
       Nova.$emit(this.viaCurrentNamespace(), this.field, field);
       Nova.$emit(this.viaCurrentNamespace(field.attribute), this.field, field);
     },
@@ -28951,7 +28951,7 @@ var render = function() {
             return _vm.$emit("update-last-retrieved-at-timestamp")
           },
           "hook:updated": function($event) {
-            return _vm.updated(field)
+            return _vm.fieldUpdated(field)
           }
         }
       })
