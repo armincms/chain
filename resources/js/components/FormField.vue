@@ -43,14 +43,14 @@ export default {
     this.setInitialValue();
 
     if(this.field.events.length > 0) {
-      Nova.$on(this.events, this.chainUpdated)   
+      Nova.$on(this.updateEvents, this.chainUpdated)   
     } else {
       this.getFields(this.form)
     }
   }, 
 
   beforeDestroy() {
-    Nova.$off(this.events, this.chainUpdated)
+    Nova.$off(this.updateEvents, this.chainUpdated)
   },
 
   computed: {
@@ -58,8 +58,8 @@ export default {
       return this.fields.length ? this.fields : []
     },
 
-    events: function() { 
-      return this.field.events.map((event) => this.attributeEvent(event))
+    updateEvents: function() { 
+      return this.field.events.map((event) => this.viaNamespace(event))
     }
   },
 
@@ -88,19 +88,23 @@ export default {
     },
 
     updated: function (field) {     
-      Nova.$emit(this.attributeEvent(field.attribute), this.field, field) 
-      Nova.$emit(this.attributeEvent(this.field.attribute+'.'+field.attribute), this.field, field)  
+      Nova.$emit(this.viaCurrentNamespace(), this.field, field) 
+      Nova.$emit(this.viaCurrentNamespace(field.attribute), this.field, field)  
     },  
+
+    viaCurrentNamespace() { 
+      return this.viaNamespace([this.field.attribute, ...arguments].join('.')) 
+    },
 
     /**
      * Make event ley for the given attribute 
      */
-    attributeEvent(event) {
-      return 'chain.' + event;
+    viaNamespace() {
+      return ['chain', [...arguments].join('.')].join(':');
     },
 
     /**
-     * Handles events.
+     * Handles updateEvents.
      */
     chainUpdated: function(chain, field) {
       var events = [chain.attribute, chain.attribute +'.'+ field.attribute];
