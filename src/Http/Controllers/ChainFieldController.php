@@ -22,7 +22,6 @@ class ChainFieldController extends Controller
         return $resource
                 ->availableFields($request)
                 ->authorized($request)
-                ->resolve($resource)
                 ->findFieldByAttribute($request->field, function () {
                     abort(response()->json([]));
                 })
