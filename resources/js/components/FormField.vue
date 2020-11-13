@@ -162,7 +162,7 @@ export default {
           formData,
           {
             params: { 
-              field: this.field.attribute, 
+              viaField: this.field.attribute, 
               resourceId: this.resourceId,
               viaResource: this.viaResource,
               viaResourceId: this.viaResourceId,
