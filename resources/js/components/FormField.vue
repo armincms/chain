@@ -46,9 +46,8 @@ export default {
     if(this.field.events.length > 0) {
       Nova.$on(this.updateEvents, this.chainUpdated)   
       Nova.$on(this.beforeDestroyEvents, this.chainBeforeDestroy)   
-    } else {
-      this.getFields(this.form)
-    }
+    } 
+    this.getFields(this.form)
   }, 
 
   beforeDestroy() {
