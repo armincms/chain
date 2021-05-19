@@ -12,6 +12,7 @@
       :via-resource-id="viaResourceId"
       :via-relationship="viaRelationship"
       :shown-via-new-relation-modal="shownViaNewRelationModal"
+      :show-help-text="true"
       @file-deleted="$emit('update-last-retrieved-at-timestamp')"  
       @hook:updated="emitUpdated(field)" 
       @hook:beforeDestroy="emitBeforeDestroy(field)" 
